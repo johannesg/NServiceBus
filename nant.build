@@ -238,15 +238,18 @@
       <foreach item="File" property="filename">
         <in>
           <items>
-            <include name="${core.build.dir}\antlr*.dll" />
+<!--            <include name="${core.build.dir}\antlr*.dll" />-->
             <include name="${core.build.dir}\common.logging.dll"/>
             <include name="${lib.dir}\common.logging.log4net.dll"/>
             <include name="${core.build.dir}\Interop.MSMQ.dll" />
-            <include name="${core.build.dir}\Spring.Core.dll"/>
+<!--
             <include name="${core.build.dir}\NHibernate*.dll" />
             <include name="${core.build.dir}\FluentNHibernate.dll" />
             <include name="${core.build.dir}\Iesi.Collections.dll" />
             <include name="${core.build.dir}\LinFu*.dll" />
+            -->
+            <include name="${core.build.dir}\antlr.runtime.dll" />
+            <include name="${core.build.dir}\Spring.Core.dll"/>
             <exclude name="${core.build.dir}\**Tests.dll" />
           </items>
         </in>
@@ -319,6 +322,7 @@
 	<mkdir dir="${build.base}\test-reports" />
 
     <!-- run the core tests-->
+	<!--
     <property name="nservicebus.testassemblies" value="" dynamic="true" />
     <foreach item="File" property="filename">
       <in>
@@ -335,6 +339,7 @@
       <arg value="/xml:..\test-reports\UnitTests.xml" />
 	  <arg value="${nunit.targetframework}" />
     </exec>
+	-->
   </target>
 
   <target name="teamcity-nunit-addin" if="${property::exists('teamcity.dotnet.nunitaddin')}" >
