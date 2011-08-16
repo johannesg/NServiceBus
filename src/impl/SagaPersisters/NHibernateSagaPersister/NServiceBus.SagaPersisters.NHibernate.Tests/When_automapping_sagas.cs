@@ -1,7 +1,6 @@
 using System.Linq;
 using FluentNHibernate.Cfg.Db;
 using NBehave.Spec.NUnit;
-using NHibernate.ByteCode.LinFu;
 using NHibernate.Id;
 using NHibernate.Impl;
 using NHibernate.Persister.Entity;
@@ -25,7 +24,6 @@ namespace NServiceBus.SagaPersisters.NHibernate.Tests
 
             sessionFactory = builder.Build(SQLiteConfiguration.Standard
              .InMemory()
-             .ProxyFactoryFactory(typeof(ProxyFactoryFactory).AssemblyQualifiedName)
              .ToProperties(), false) as SessionFactoryImpl;
 
             persisterForTestSaga = sessionFactory.GetEntityPersister(typeof(TestSaga).FullName);

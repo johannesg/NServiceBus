@@ -4,7 +4,6 @@ using System.Configuration;
 using System.Linq;
 using FluentNHibernate.Cfg;
 using NHibernate;
-using NHibernate.ByteCode.LinFu;
 using NHibernate.Context;
 using NHibernate.Tool.hbm2ddl;
 using NServiceBus.SagaPersisters.NHibernate.AutoPersistence;
@@ -70,10 +69,6 @@ namespace NServiceBus.SagaPersisters.NHibernate.Config.Internal
                 c =>
                     {
                         c.SetProperty("current_session_context_class",typeof(ThreadStaticSessionContext).AssemblyQualifiedName);
-
-                        //default to LinFu if not specifed by user
-                        if (!c.Properties.Keys.Contains(PROXY_FACTORY_KEY))
-                            c.SetProperty(PROXY_FACTORY_KEY,typeof(ProxyFactoryFactory).AssemblyQualifiedName);
                     }
                 );
         }

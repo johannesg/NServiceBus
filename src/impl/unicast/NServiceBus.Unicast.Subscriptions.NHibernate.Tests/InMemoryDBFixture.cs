@@ -2,7 +2,6 @@ using System.IO;
 using FluentNHibernate;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
-using NHibernate.ByteCode.LinFu;
 using NUnit.Framework;
 
 namespace NServiceBus.Unicast.Subscriptions.NHibernate.Tests
@@ -15,9 +14,8 @@ namespace NServiceBus.Unicast.Subscriptions.NHibernate.Tests
         [SetUp]
         public void SetupContext()
         {
-            var cfg = SQLiteConfiguration.Standard
-                  .UsingFile(Path.GetTempFileName())
-                  .ProxyFactoryFactory(typeof(ProxyFactoryFactory).AssemblyQualifiedName);
+          var cfg = SQLiteConfiguration.Standard
+            .UsingFile(Path.GetTempFileName());
 
             var fc = Fluently.Configure()
                 .Database(cfg)
