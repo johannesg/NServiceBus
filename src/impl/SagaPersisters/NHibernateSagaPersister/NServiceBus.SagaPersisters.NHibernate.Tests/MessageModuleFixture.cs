@@ -1,7 +1,6 @@
 using System.IO;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
-using NHibernate.ByteCode.LinFu;
 using NServiceBus.SagaPersisters.NHibernate.Config.Internal;
 using NUnit.Framework;
 
@@ -18,7 +17,6 @@ namespace NServiceBus.SagaPersisters.NHibernate.Tests
         {
             var nhibernateProperties = SQLiteConfiguration.Standard
                 .UsingFile(Path.GetTempFileName())
-                .ProxyFactoryFactory(typeof(ProxyFactoryFactory).AssemblyQualifiedName)
                 .ToProperties();
 
             SessionFactory = new SessionFactoryBuilder(typeof(TestSaga).Assembly.GetTypes())

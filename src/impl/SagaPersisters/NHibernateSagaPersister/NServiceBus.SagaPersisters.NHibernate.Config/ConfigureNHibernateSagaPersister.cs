@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
-using NHibernate.ByteCode.LinFu;
 using NServiceBus.Config;
 using NServiceBus.ObjectBuilder;
 using NServiceBus.SagaPersisters.NHibernate;
@@ -49,7 +48,6 @@ namespace NServiceBus
         {
             var nhibernateProperties = SQLiteConfiguration.Standard
                     .UsingFile(".\\NServiceBus.Sagas.sqlite")
-                    .ProxyFactoryFactory(typeof(ProxyFactoryFactory).AssemblyQualifiedName)
                     .ToProperties();
 
             return NHibernateSagaPersister(config, nhibernateProperties, true);

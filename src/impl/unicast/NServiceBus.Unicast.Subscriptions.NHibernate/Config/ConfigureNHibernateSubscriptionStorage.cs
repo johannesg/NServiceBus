@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using FluentNHibernate;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
-using NHibernate.ByteCode.LinFu;
 using NHibernate.Tool.hbm2ddl;
 using NServiceBus.Config;
 using NServiceBus.ObjectBuilder;
@@ -27,7 +26,6 @@ namespace NServiceBus
         {
             var nhibernateProperties = SQLiteConfiguration
                 .Standard
-                .ProxyFactoryFactory(typeof(ProxyFactoryFactory).AssemblyQualifiedName)
                 .UsingFile(".\\NServiceBus.Subscriptions.sqlite")
                 .ToProperties();
 
@@ -80,12 +78,6 @@ namespace NServiceBus
 
             if (autoUpdateSchema)
                 new SchemaUpdate(cfg).Execute(false, true);
-
-            //default to LinFu if not specifed by user
-            if (!cfg.Properties.Keys.Contains(PROXY_FACTORY_KEY))
-                fluentConfiguration.ExposeConfiguration(
-                    x =>
-                    x.SetProperty(PROXY_FACTORY_KEY, typeof(ProxyFactoryFactory).AssemblyQualifiedName));
 
             var sessionSource = new SessionSource(fluentConfiguration);
 
