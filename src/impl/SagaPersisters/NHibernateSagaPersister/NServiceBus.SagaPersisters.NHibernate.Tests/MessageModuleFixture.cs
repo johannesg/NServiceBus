@@ -24,7 +24,7 @@ namespace NServiceBus.SagaPersisters.NHibernate.Tests
 
 
             MessageModule = new NHibernateMessageModule { SessionFactory = SessionFactory };
-            SagaPersister = new SagaPersister { SessionFactory = SessionFactory };
+            SagaPersister = new SagaPersister { MessageModule = (NHibernateMessageModule)MessageModule };
         }
     }
 }

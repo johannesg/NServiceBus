@@ -11,13 +11,18 @@ namespace NServiceBus.SagaPersisters.NHibernate
     public class SagaPersister : ISagaPersister
     {
         /// <summary>
+        /// 
+        /// </summary>
+        public NHibernateMessageModule MessageModule { get; set; }
+
+        /// <summary>
         /// Saves the given saga entity using the current session of the
         /// injected session factory.
         /// </summary>
         /// <param name="saga">the saga entity that will be saved.</param>
         public void Save(ISagaEntity saga)
         {
-            SessionFactory.GetCurrentSession().Save(saga);
+            MessageModule.CurrentSession.Save(saga);
         }
 
         /// <summary>
@@ -27,7 +32,7 @@ namespace NServiceBus.SagaPersisters.NHibernate
         /// <param name="saga">the saga entity that will be updated.</param>
         public void Update(ISagaEntity saga)
         {
-            SessionFactory.GetCurrentSession().Update(saga);
+            MessageModule.CurrentSession.Update(saga);
         }
 
         /// <summary>
@@ -38,12 +43,12 @@ namespace NServiceBus.SagaPersisters.NHibernate
         /// <returns>The saga entity if found, otherwise null.</returns>
         public T Get<T>(Guid sagaId) where T : ISagaEntity
         {
-            return SessionFactory.GetCurrentSession().Get<T>(sagaId);
+            return MessageModule.CurrentSession.Get<T>(sagaId);
         }
 
         T ISagaPersister.Get<T>(string property, object value)
         {
-            return SessionFactory.GetCurrentSession().CreateCriteria(typeof(T))
+            return MessageModule.CurrentSession.CreateCriteria(typeof(T))
                 .Add(Restrictions.Eq(property, value))
                 .UniqueResult<T>();
         }
@@ -55,12 +60,7 @@ namespace NServiceBus.SagaPersisters.NHibernate
         /// <param name="saga">The saga entity that will be deleted.</param>
         public void Complete(ISagaEntity saga)
         {
-            SessionFactory.GetCurrentSession().Delete(saga);
+            MessageModule.CurrentSession.Delete(saga);
         }
-
-        /// <summary>
-        /// Injected session factory.
-        /// </summary>
-        public ISessionFactory SessionFactory { get; set; }
     }
 }

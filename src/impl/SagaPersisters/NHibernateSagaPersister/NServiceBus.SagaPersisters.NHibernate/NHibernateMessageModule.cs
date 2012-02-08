@@ -1,6 +1,6 @@
+using System;
 using System.Transactions;
 using NHibernate;
-using NHibernate.Context;
 
 namespace NServiceBus.SagaPersisters.NHibernate
 {
@@ -11,26 +11,39 @@ namespace NServiceBus.SagaPersisters.NHibernate
     /// </summary>
     public class NHibernateMessageModule : IMessageModule
     {
-        void IMessageModule.HandleBeginMessage()
+
+        [ThreadStatic]
+        private static ISession _currentSession;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ISession CurrentSession
         {
-            if (SessionFactory == null) return;
+            get { return _currentSession ?? (_currentSession = OpenSession()); }
+        }
+
+        private ISession OpenSession()
+        {
+            if (SessionFactory == null)
+                return null;
 
             var session = SessionFactory.OpenSession();
-
-            CurrentSessionContext.Bind(session);
-
             session.BeginTransaction(GetIsolationLevel());
+            return session;
+        }
+
+        void IMessageModule.HandleBeginMessage()
+        {
         }
 
         void IMessageModule.HandleEndMessage()
         {
-            if (SessionFactory == null) return;
-
-            // HandleEndMessage can be called before HandleBeginMessage in case of an error, so check for the existence of a session first.
-            if (!CurrentSessionContext.HasBind(SessionFactory))
-              return;
-
-            var session = CurrentSessionContext.Unbind(SessionFactory);
+            if (_currentSession == null)
+                return;
+            
+            var session = _currentSession;
+            _currentSession = null;
 
             using (session)
             using (session.Transaction)
@@ -44,12 +57,11 @@ namespace NServiceBus.SagaPersisters.NHibernate
 
         void IMessageModule.HandleError()
         {
-            if (SessionFactory == null) return;
+            if (_currentSession == null)
+                return;
 
-            if (!CurrentSessionContext.HasBind(SessionFactory))
-              return;
-
-            var session = CurrentSessionContext.Unbind(SessionFactory);
+            var session = _currentSession;
+            _currentSession = null;
 
             using (session)
             using (session.Transaction)
