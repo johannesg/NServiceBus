@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Castle.MicroKernel.Releasers;
+using System.Reflection;
 using NServiceBus.ObjectBuilder.Common;
 using Castle.Windsor;
 using Castle.MicroKernel;
@@ -53,16 +53,26 @@ namespace NServiceBus.ObjectBuilder.CastleWindsor
 
         void IContainer.ConfigureProperty(Type component, string property, object value)
         {
-            var handler = GetHandlerForType(component);
-            if (handler == null)
-                throw new InvalidOperationException("Cannot configure property for a type which hadn't been configured yet. Please call 'Configure' first.");
+            //var handler = GetHandlerForType(component);
+            //if (handler == null)
+            //    throw new InvalidOperationException("Cannot configure property for a type which hadn't been configured yet. Please call 'Configure' first.");
 
-            handler.AddCustomDependencyValue(property, value);
+            //handler.AddCustomDependencyValue(property, value);
+
+          var componentModel = Container.Kernel
+            .GetAssignableHandlers(component)
+            .Select(x => x.ComponentModel).SingleOrDefault();
+
+            if (componentModel == null)
+              throw new InvalidOperationException("Cannot configure property for a type which hadn't been configured yet. Please call 'Configure' first.");
+            PropertyInfo property1 = component.GetProperty(property);
+            
+            componentModel.AddProperty(new PropertySet(property1, new DependencyModel(property, property1.PropertyType, false, true, value)));
         }
 
         void IContainer.RegisterSingleton(Type lookupType, object instance)
         {
-            Container.Kernel.AddComponentInstance(Guid.NewGuid().ToString(), lookupType, instance);
+            Container.Register(Component.For(lookupType).Named(lookupType.Name).Instance(instance));
         }
 
         object IContainer.Build(Type typeToBuild)
